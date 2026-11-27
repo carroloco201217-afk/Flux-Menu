@@ -22,7 +22,6 @@ jobs:
         run: |
           ZIP=$(find . -maxdepth 2 -iname "*.zip" | head -n 1)
           if [ -n "$ZIP" ]; then
-            echo "Usando zip: $ZIP"
             unzip -q "$ZIP" -d fuente
             PROJ=$(dirname "$(find fuente -name pom.xml | head -n 1)")
           else
@@ -30,10 +29,15 @@ jobs:
           fi
           echo "PROJ=$PROJ" >> "$GITHUB_ENV"
           sed -i '/<!-- Cumulus/,/<\/dependency>/d' "$PROJ/pom.xml"
-          grep -c cumulus "$PROJ/pom.xml" || true
 
       - name: Compilar
-        run: mvn -B clean package -f "$PROJ/pom.xml"
+        run: |
+          set -o pipefail
+          mvn -B clean package -f "$PROJ/pom.xml" 2>&1 | tee build.log
+
+      - name: ERRORES (abre este paso)
+        if: failure()
+        run: grep -E "\.java|COMPILATION|error:" build.log | head -40
 
       - name: Subir JAR
         uses: actions/upload-artifact@v4
