@@ -1,0 +1,127 @@
+# ===================================================================
+#  SemianarquicoMenu 2.1.0 - configuracion
+#  Colores con &. Despues de editar usa /menu reload
+# ===================================================================
+
+# Ancho de los botones de dialogos Java (100 a 1024)
+ancho-botones: 320
+
+# Simbolo de dinero
+moneda: "$"
+
+# RTP: nombre EXACTO de la carpeta del mundo survival
+rtp:
+  mundo: "survival"
+
+# -------------------------------------------------------------------
+# DETECCION BEDROCK / JAVA
+# -------------------------------------------------------------------
+# Si el jugador es Bedrock (Floodgate o prefijo), se abren menús de
+# DeluxeMenus (inventario). Si es Java, se usan los Dialogs de Paper.
+bedrock:
+  # Prefijos de nombre que identifican a jugadores Bedrock
+  # (Floodgate suele poner BD_ o el que configures)
+  prefijos:
+    - "BD_"
+    - "BD."
+  # Si Floodgate esta instalado, se usa su API (mas fiable).
+  # Si no, solo se mira el prefijo.
+  usar-floodgate: true
+  # Comandos de DeluxeMenus que se ejecutan para Bedrock
+  # {jugador} = nombre del jugador
+  menus:
+    principal: "dm open flux_menu {jugador}"
+    kits: "dm open kits {jugador}"
+    warps: "dm open warps {jugador}"
+    rtp: "dm open rtp {jugador}"
+
+menu:
+  titulo: "&6&lSEMIANARQUICO MENU"
+  descripcion: "&fElige una opcion para comenzar a jugar:"
+  botones:
+    warps:
+      nombre: "&6&lWARPS"
+      descripcion: "&7Zonas de minas, PvP y spawn"
+      abre: "warps"
+    rtp:
+      nombre: "&b&lRTP"
+      descripcion: "&7Explora el mundo survival"
+      comando: "rtp world {mundo}"
+    kits:
+      nombre: "&d&lKITS"
+      descripcion: "&7Obten tus herramientas y equipo"
+      abre: "kits"
+    tpagui:
+      nombre: "&d&lTPAGUI"
+      descripcion: "&7Envia y acepta solicitudes de teletransporte"
+      comando: "tpa"
+    shop:
+      nombre: "&a&lSHOP"
+      descripcion: "&7Compra bloques y materiales"
+      comando: "shop"
+
+kits:
+  titulo: "&d&lCATEGORIAS DE KITS"
+  descripcion: "&fSelecciona el tipo de equipamiento que buscas:"
+  volver: "&7Volver al Menu Principal"
+  categorias:
+    dinero:
+      titulo: "&a&lKITS POR DINERO"
+      nombre: "&a&lKITS POR DINERO"
+      descripcion: "&7Kits accesibles con dinero del juego"
+      permiso: ""
+    premium:
+      titulo: "&6&lKITS PREMIUM"
+      nombre: "&6&lKITS PREMIUM"
+      descripcion: "&7Kits exclusivos para rangos"
+      permiso: "semianarquico.kits.premium"
+    streamer:
+      titulo: "&b&lKITS STREAMER"
+      nombre: "&b&lKITS STREAMER"
+      descripcion: "&7Kits especiales para streamers"
+      permiso: "semianarquico.kits.streamer"
+
+warps:
+  titulo: "&6&lWARPS"
+  descripcion: "&fElige a donde quieres ir:"
+  sin-warps: "&7Todavia no hay warps creados."
+  descripcion-por-defecto: "&7Click para teletransportarte"
+  volver: "&7Volver al Menu Principal"
+
+tinte:
+  material: YELLOW_DYE
+  nombre: "&e&lFLUX &6&lMENU"
+  lore:
+    - "&7Click derecho para abrir el menu"
+  slot: 8
+
+mensajes:
+  sin-permiso: "&cNo tienes permiso."
+  solo-jugadores: "Solo jugadores."
+  recargado: "&aConfiguracion recargada."
+  sin-economia: "&cNo hay economia (Vault) para cobrar este kit. Avisa a un admin."
+  sin-dinero: "&cNo tienes suficiente dinero. Este kit cuesta {precio}&c."
+  kit-no-existe: "&cEl kit &f{kit} &cno existe."
+  kit-sin-permiso: "&cNo tienes acceso al kit &f{kit}&c."
+  kit-recibido: "&aRecibiste el kit &f{kit}&a."
+  kit-creado: "&aKit &f{kit} &acreado: {precio} &7(categoria &f{categoria}&7)"
+  kit-borrado: "&aKit &f{kit} &aborrado."
+  kit-vacio: "&cTu inventario esta vacio. Pon en tu inventario lo que llevara el kit."
+  kit-desc: "&aDescripcion del kit &f{kit} &aactualizada."
+  kit-lista: "&7Kits: &f{lista}"
+  nombre-invalido: "&cNombre invalido. Usa letras, numeros, - o _ (maximo 32)."
+  precio-invalido: "&cEl precio debe ser un numero (0 o mas)."
+  categoria-invalida: "&cCategoria invalida. Opciones: &f{lista}"
+  uso-kit-create: "&cUso: /kit create <nombre> <precio> [categoria]"
+  uso-kit-delete: "&cUso: /kit delete <nombre>"
+  uso-kit-desc: "&cUso: /kit desc <nombre> <descripcion>"
+  warp-creado: "&aWarp &f{warp} &acreado."
+  warp-borrado: "&aWarp &f{warp} &aborrado."
+  warp-desc: "&aDescripcion del warp &f{warp} &aactualizada."
+  warp-no-existe: "&cEl warp &f{warp} &cno existe."
+  warp-tp: "&aTeletransportado a &f{warp}&a."
+  mundo-no-cargado: "&cEl mundo de ese warp no esta cargado."
+  uso-setwarp: "&cUso: /setwarp <nombre> [descripcion]"
+  uso-delwarp: "&cUso: /delwarp <nombre>"
+  uso-warpdesc: "&cUso: /warpdesc <nombre> <descripcion>"
+  bedrock-menu: "&aAbriendo menu Bedrock..."
