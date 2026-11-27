@@ -29,6 +29,8 @@ jobs:
           fi
           echo "PROJ=$PROJ" >> "$GITHUB_ENV"
           sed -i '/<!-- Cumulus/,/<\/dependency>/d' "$PROJ/pom.xml"
+          sed -i 's/1\.21\.4-R0\.1-SNAPSHOT/1.21.8-R0.1-SNAPSHOT/' "$PROJ/pom.xml"
+          grep -n "paper-api" -A1 "$PROJ/pom.xml"
 
       - name: Compilar
         run: |
@@ -37,7 +39,7 @@ jobs:
 
       - name: ERRORES (abre este paso)
         if: failure()
-        run: grep -E "\.java|COMPILATION|error:" build.log | head -40
+        run: grep -E "ERROR.*\.java" build.log | head -40
 
       - name: Subir JAR
         uses: actions/upload-artifact@v4
