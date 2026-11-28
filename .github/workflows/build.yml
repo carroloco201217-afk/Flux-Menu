@@ -5,6 +5,10 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+# Permiso para que el workflow pueda subir la carpeta "texturas" al repositorio
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -37,6 +41,21 @@ jobs:
           sed -i '/<!-- Cumulus/,/<\/dependency>/d' "$PROJ/pom.xml"
           sed -i 's/1\.21\.4-R0\.1-SNAPSHOT/1.21.8-R0.1-SNAPSHOT/' "$PROJ/pom.xml"
           grep -n "paper-api" -A1 "$PROJ/pom.xml"
+
+      - name: Publicar texturas del zip en el repositorio
+        run: |
+          # Si el zip trae una carpeta "texturas", se copia al repositorio (para el enlace raw de GitHub)
+          if [ -d "$PROJ/texturas" ] && [ "$PROJ" != "." ]; then
+            mkdir -p texturas
+            cp -r "$PROJ/texturas/." texturas/
+            git config user.name "github-actions"
+            git config user.email "github-actions@users.noreply.github.com"
+            git add texturas
+            if ! git diff --cached --quiet; then
+              git commit -m "Actualizar texturas"
+              git push
+            fi
+          fi
 
       - name: Compilar
         run: |
