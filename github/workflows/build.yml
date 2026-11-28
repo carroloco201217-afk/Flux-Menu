@@ -1,0 +1,55 @@
+name: Build Plugin
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Preparar proyecto
+        run: |
+          # Busca el .zip del plugin (hasta 2 carpetas de profundidad).
+          # Prefiere los que tengan "flux" en el nombre y, si hay varios, el de version mas alta.
+          ZIP=$(find . -maxdepth 2 -iname "*flux*.zip" | sort -V | tail -n 1)
+          if [ -z "$ZIP" ]; then
+            ZIP=$(find . -maxdepth 2 -iname "*.zip" | sort -V | tail -n 1)
+          fi
+          if [ -n "$ZIP" ]; then
+            echo "Usando: $ZIP"
+            unzip -q "$ZIP" -d fuente
+            PROJ=$(dirname "$(find fuente -name pom.xml | head -n 1)")
+          else
+            PROJ=.
+          fi
+          echo "PROJ=$PROJ" >> "$GITHUB_ENV"
+          sed -i '/<!-- Cumulus/,/<\/dependency>/d' "$PROJ/pom.xml"
+          sed -i 's/1\.21\.4-R0\.1-SNAPSHOT/1.21.8-R0.1-SNAPSHOT/' "$PROJ/pom.xml"
+          grep -n "paper-api" -A1 "$PROJ/pom.xml"
+
+      - name: Compilar
+        run: |
+          set -o pipefail
+          mvn -B clean package -f "$PROJ/pom.xml" 2>&1 | tee build.log
+
+      - name: ERRORES (abre este paso)
+        if: failure()
+        run: grep -E "ERROR.*\.java" build.log | head -40
+
+      - name: Subir JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: Flux-Menu
+          path: ${{ env.PROJ }}/target/Flux-Menu-*.jar
+          if-no-files-found: error
