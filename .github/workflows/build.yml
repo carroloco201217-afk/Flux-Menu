@@ -5,13 +5,11 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
-# Permiso para que el workflow pueda subir la carpeta "texturas" al repositorio
-permissions:
-  contents: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,16 +40,20 @@ jobs:
           sed -i 's/1\.21\.4-R0\.1-SNAPSHOT/1.21.8-R0.1-SNAPSHOT/' "$PROJ/pom.xml"
           grep -n "paper-api" -A1 "$PROJ/pom.xml"
 
-      - name: Publicar texturas del zip en el repositorio
+      # Sube la carpeta "texturas" del zip a la raiz del repositorio para que los
+      # enlaces raw.githubusercontent.com/.../main/texturas/xxx.png funcionen.
+      - name: Publicar texturas
+        continue-on-error: true
         run: |
-          # Si el zip trae una carpeta "texturas", se copia al repositorio (para el enlace raw de GitHub)
           if [ -d "$PROJ/texturas" ] && [ "$PROJ" != "." ]; then
             mkdir -p texturas
-            cp -r "$PROJ/texturas/." texturas/
-            git config user.name "github-actions"
-            git config user.email "github-actions@users.noreply.github.com"
+            cp -f "$PROJ"/texturas/*.png texturas/
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add texturas
-            if ! git diff --cached --quiet; then
+            if git diff --cached --quiet; then
+              echo "Texturas sin cambios"
+            else
               git commit -m "Actualizar texturas"
               git push
             fi
